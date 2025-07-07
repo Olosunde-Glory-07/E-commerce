@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopEase - Your Cart</title>
+  <style>
+    /* Basic Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7f8;
+      color: #333;
+    }
+
+    /* Header */
+    header {
+      background-color: #264653;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1em 2em;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    header .logo {
+      font-size: 1.5em;
+      font-weight: bold;
+      cursor: pointer;
+      color: #2a9d8f;
+    }
+
+    header nav a {
+      color: white;
+      margin-left: 1.2em;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    header nav a:hover {
+      color: #2a9d8f;
+    }
+
+    /* Main Content */
+    main {
+      max-width: 1000px;
+      margin: 2em auto;
+      padding: 0 1em;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5em;
+      color: #264653;
+    }
+
+    /* Cart Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5em;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    th, td {
+      padding: 1em;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background-color: #2a9d8f;
+      color: white;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    /* Quantity Controls */
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5em;
+    }
+
+    .quantity-controls button {
+      padding: 0.3em 0.7em;
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .quantity-controls button:hover {
+      background-color: #1f776e;
+    }
+
+    /* Remove Button */
+    .remove-btn {
+      background-color: #e76f51;
+      color: white;
+      border: none;
+      padding: 0.5em 0.9em;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .remove-btn:hover {
+      background-color: #c25038;
+    }
+
+    /* Total & Checkout */
+    .totals {
+      text-align: right;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 1em;
+      color: #264653;
+    }
+
+    .btn-checkout {
+      background-color: #2a9d8f;
+      color: white;
+      padding: 1em 2em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      display: block;
+      margin: 0 auto;
+      transition: background-color 0.3s;
+    }
+
+    .btn-checkout:hover {
+      background-color: #21867a;
+    }
+
+    /* Empty Cart Message */
+    .empty-cart {
+      text-align: center;
+      font-size: 1.1rem;
+      margin: 3em 0;
+      color: #666;
+    }
+
+    .empty-cart a {
+      color: #2a9d8f;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .empty-cart a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      table thead {
+        display: none;
+      }
+
+      table, table tbody, table tr, table td {
+        display: block;
+        width: 100%;
+      }
+
+      table tr {
+        margin-bottom: 1.2em;
+        background: white;
+        padding: 1em;
+        border-radius: 10px;
+      }
+
+      table td {
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+      }
+
+      table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1em;
+        top: 1em;
+        font-weight: bold;
+        color: #264653;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="window.location.href='index.html'">ShopEase</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="product.html">Shop</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <h1>Your Shopping Cart</h1>
+  <div id="cartContainer"></div>
+</main>
+
+<script>
+  const API_URL = 'http://localhost:5000/api/products';
+  const CART_API_URL = 'http://localhost:5000/api/cart';
+
+  // Format numbers to Nigerian Naira currency
+  const formatNaira = amount => `₦${amount.toLocaleString()}`;
+
+  // Get cart from localStorage
+  function getCart() {
+    try {
+      return JSON.parse(localStorage.getItem('cart')) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  // Save cart to localStorage
+  function saveCart(cart) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  // Fetch all products from backend
+  async function fetchAllProducts() {
+    try {
+      const response = await fetch(API_URL);
+      return await response.json();
+    } catch (error) {
+      console.error('❌ Failed to fetch products:', error);
+      return [];
+    }
+  }
+
+  // Render shopping cart table
+  async function renderCart() {
+    const allProducts = await fetchAllProducts();
+    const cart = getCart();
+    const container = document.getElementById('cartContainer');
+    container.innerHTML = '';
+
+    if (cart.length === 0) {
+      container.innerHTML = `
+        <p class="empty-cart">
+          Your cart is empty. <a href="index.html">Start shopping now!</a>
+        </p>`;
+      return;
+    }
+
+    // Create table
+    const table = document.createElement('table');
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Subtotal</th>
+          <th>Remove</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+
+    const tbody = table.querySelector('tbody');
+    let total = 0;
+
+    cart.forEach(item => {
+      const product = allProducts.find(p => p.id === item.id) || {};
+      const imageUrl = product.image || 'https://via.placeholder.com/100';
+      const name = item.name || product.name || 'Unnamed Product';
+      const price = item.price || product.price || 0;
+      const quantity = item.quantity || 1;
+      const subtotal = price * quantity;
+      total += subtotal;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><img src="${imageUrl}" alt="${name}" /></td>
+        <td>${name}</td>
+        <td>${formatNaira(price)}</td>
+        <td>
+          <div class="quantity-controls">
+            <button class="btn-decrease">-</button>
+            <span>${quantity}</span>
+            <button class="btn-increase">+</button>
+          </div>
+        </td>
+        <td>${formatNaira(subtotal)}</td>
+        <td><button class="remove-btn">Remove</button></td>
+      `;
+
+      // Quantity Decrease Button
+      tr.querySelector('.btn-decrease').onclick = () => {
+        const updatedCart = getCart();
+        const cartItem = updatedCart.find(c => c.id === item.id);
+        if (cartItem && cartItem.quantity > 1) {
+          cartItem.quantity--;
+          saveCart(updatedCart);
+          renderCart();
+        }
+      };
+
+      // Quantity Increase Button
+      tr.querySelector('.btn-increase').onclick = () => {
+        const updatedCart = getCart();
+        const cartItem = updatedCart.find(c => c.id === item.id);
+        if (cartItem) {
+          cartItem.quantity++;
+          saveCart(updatedCart);
+          renderCart();
+        }
+      };
+
+      // Remove Button
+      tr.querySelector('.remove-btn').onclick = () => {
+        if (confirm(`Remove "${name}" from your cart?`)) {
+          const updatedCart = getCart().filter(c => c.id !== item.id);
+          saveCart(updatedCart);
+          renderCart();
+        }
+      };
+
+      tbody.appendChild(tr);
+    });
+
+    container.appendChild(table);
+
+    // Total Display
+    const totalsDiv = document.createElement('div');
+    totalsDiv.className = 'totals';
+    totalsDiv.textContent = `Total: ${formatNaira(total)}`;
+    container.appendChild(totalsDiv);
+
+    // Checkout Button
+    const checkoutBtn = document.createElement('button');
+    checkoutBtn.className = 'btn-checkout';
+    checkoutBtn.textContent = 'Checkout';
+
+    checkoutBtn.onclick = async () => {
+      try {
+        const cartData = getCart();
+        const response = await fetch(CART_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cartData)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('✅ Cart sent:', result);
+          window.location.href = 'payment.html';
+        } else {
+          throw new Error('Server rejected cart data');
+        }
+      } catch (err) {
+        console.error('❌ Checkout failed:', err);
+        alert('Something went wrong during checkout.');
+      }
+    };
+
+    container.appendChild(checkoutBtn);
+  }
+
+  // Init on page load
+  document.addEventListener('DOMContentLoaded', renderCart);
+</script>
+
+</body>
+</html>

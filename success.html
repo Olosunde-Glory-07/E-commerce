@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thank You - ShopEase</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      text-align: center;
+    }
+    .card {
+      background: white;
+      padding: 3em 2em;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      max-width: 500px;
+    }
+    h1 {
+      color: #2a9d8f;
+      font-size: 2.5rem;
+      margin-bottom: 0.5em;
+    }
+    p {
+      color: #555;
+      font-size: 1.1rem;
+      margin-bottom: 2em;
+    }
+    .home-btn {
+      background: #2a9d8f;
+      color: white;
+      padding: 0.8em 2em;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .home-btn:hover {
+      background: #21867a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Thank You!</h1>
+    <p>Your order has been placed successfully.<br>We appreciate your business!</p>
+    <button class="home-btn" onclick="window.location.href='index.html'">Continue Shopping</button>
+  </div>
+  
+  <script>
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    // Debug: show most recent order
+    console.log("✅ Orders in localStorage:", orders);
+
+    // Optionally, display last order on screen for user confirmation
+    if (orders.length > 0) {
+      const latest = orders[orders.length - 1];
+      const p = document.createElement("p");
+      p.innerHTML = `
+        <strong>Order Summary:</strong><br>
+        Name: ${latest.name}<br>
+        Email: ${latest.email}<br>
+        Ref: ${latest.reference}<br>
+        Total: ₦${latest.total.toLocaleString()}
+      `;
+      p.style.marginTop = "1em";
+      document.querySelector(".card").appendChild(p);
+    }
+  </script>
+
+</body>
+</html>

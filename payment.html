@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopEase - Checkout</title>
+  <style>
+    body { font-family: Arial; background:#f8f8f8; margin:0; padding:20px; }
+    h1 { text-align:center; color:#2a9d8f; }
+    .checkout-container {
+      max-width:800px; margin:auto; background:#fff; padding:2em;
+      border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);
+    }
+    .form-group { margin-bottom:1em; }
+    .form-label { display:block; font-size:16px; margin-bottom:6px; color:#333; font-weight:600; }
+    input, select {
+      width:100%; padding:.8em; border:1px solid #ccc;
+      border-radius:6px; font-size:15px; background:#f8f8f8; outline:none;
+    }
+    input:focus, select:focus {
+      border-color:#007bff; background:#fff;
+      box-shadow:0 0 5px rgba(0,123,255,0.2);
+    }
+    button {
+      padding:1em; background:#2a9d8f; color:#fff; border:none;
+      border-radius:8px; font-weight:bold; cursor:pointer; width:100%; margin-top:1em;
+    }
+    button:hover { background:#21867a; }
+    .summary { margin-top:2em; }
+    .summary-item { display:flex; justify-content:space-between; margin:.4em 0; }
+    .total { font-weight:bold; color:#264653; }
+  </style>
+</head>
+<body>
+
+<h1>Checkout</h1>
+<div class="checkout-container">
+  <form id="checkoutForm">
+    <div class="form-group"><label class="form-label" for="name">Full Name</label><input type="text" id="name" required></div>
+    <div class="form-group"><label class="form-label" for="email">Email Address</label><input type="email" id="email" required></div>
+    <div class="form-group"><label class="form-label" for="phone">Phone Number</label><input type="tel" id="phone" required></div>
+    <div class="form-group"><label class="form-label" for="address">Delivery Address</label><input type="text" id="address" required></div>
+
+    <div class="form-group"><label class="form-label" for="states">Select State</label>
+      <select id="states" required>
+        <option value="">-- Select State --</option>
+      </select>
+    </div>
+
+    <div class="form-group"><label class="form-label" for="lga">Select Local Government</label>
+      <select id="lga" required>
+        <option value="">-- Select LGA --</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="townGroup" style="display:none;">
+      <label class="form-label" for="town">Town / Street</label>
+      <input type="text" id="town" placeholder="Enter your town or street" required>
+    </div>
+
+    <div class="summary" id="orderSummary"></div>
+    <button type="submit">Pay with Paystack</button>
+  </form>
+</div>
+
+<script src="https://js.paystack.co/v1/inline.js" onerror="alert('❌ Failed to load Paystack. Check your internet connection.')"></script>
+<script>
+  // Load Nigerian States & LGAs from JSON file
+  fetch('states-and-lgas.json')
+    .then(res => res.json())
+    .then(data => {
+      const statesSelect = document.getElementById("states");
+      const lgaSelect = document.getElementById("lga");
+
+      data.forEach(state => {
+        const opt = document.createElement("option");
+        opt.value = state.state;
+        opt.textContent = state.state;
+        statesSelect.appendChild(opt);
+      });
+
+      statesSelect.addEventListener("change", () => {
+        const selectedState = data.find(s => s.state === statesSelect.value);
+        lgaSelect.innerHTML = '<option value="">-- Select LGA --</option>';
+
+        if (selectedState) {
+          selectedState.lgas.forEach(lga => {
+            const opt = document.createElement("option");
+            opt.value = lga;
+            opt.textContent = lga;
+            lgaSelect.appendChild(opt);
+          });
+        }
+
+        document.getElementById("townGroup").style.display = "none";
+      });
+
+      lgaSelect.addEventListener("change", () => {
+        document.getElementById("townGroup").style.display = lgaSelect.value !== "";
+      });
+    })
+    .catch(err => {
+      console.error("❌ Failed to load states-and-lgas.json", err);
+      alert("Could not load states and LGAs. Check your internet or file path.");
+    });
+
+  // Load and display cart summary
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const orderSummary = document.getElementById("orderSummary");
+
+  function calculateTotal() {
+    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  }
+
+  function renderOrderSummary() {
+    if (!cart.length) {
+      orderSummary.innerHTML = "<p>Your cart is empty.</p>";
+      return;
+    }
+
+    orderSummary.innerHTML = "<h3>Order Summary:</h3>";
+    cart.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "summary-item";
+      row.innerHTML = `<span>${item.name} x ${item.quantity}</span><span>₦${(item.price * item.quantity).toLocaleString()}</span>`;
+      orderSummary.appendChild(row);
+    });
+
+    const totalRow = document.createElement("div");
+    totalRow.className = "summary-item total";
+    totalRow.innerHTML = `<span>Total</span><span>₦${calculateTotal().toLocaleString()}</span>`;
+    orderSummary.appendChild(totalRow);
+  }
+
+  renderOrderSummary();
+
+  // Handle form submission and Paystack
+  document.getElementById('checkoutForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const state = document.getElementById("states").value;
+    const lga = document.getElementById("lga").value;
+    const town = document.getElementById("town").value.trim();
+    const total = calculateTotal();
+
+    if (!name || !email || !phone || !address || !state || !lga || !town || total <= 0) {
+      alert("❗ Please complete all fields and ensure cart is not empty.");
+      return;
+    }
+
+    if (typeof PaystackPop === "undefined") {
+      alert("❌ Paystack is not available. Check your internet.");
+      return;
+    }
+
+    const handler = PaystackPop.setup({
+      key: 'pk_test_e93bd011e5f62bea782efda02d9949188c7166e7',
+      email: email,
+      amount: total * 100, // convert to kobo
+      currency: "NGN",
+      metadata: {
+        custom_fields: [
+          { display_name: "Name", value: name },
+          { display_name: "Phone", value: phone },
+          { display_name: "Address", value: address },
+          { display_name: "State", value: state },
+          { display_name: "LGA", value: lga },
+          { display_name: "Town", value: town }
+        ]
+      },
+      callback: function (response) {
+        alert("✅ Payment complete! Reference: " + response.reference);
+
+        const order = {
+          name, email, phone, address, state, lga, town,
+          total, reference: response.reference,
+          items: cart,
+          placedAt: new Date().toLocaleString(),
+          status: "In Progress"
+        };
+
+        // Save order to backend
+        fetch("http://localhost:5000/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(order)
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log("✅ Order saved:", data);
+          localStorage.removeItem("cart");
+          window.location.href = "success.html";
+        })
+        .catch(err => {
+          console.error("❌ Order save failed:", err);
+          alert("Could not save your order. Please contact support.");
+        });
+      },
+      onClose: function () {
+        alert("⛔ Payment cancelled.");
+      }
+    });
+
+    handler.openIframe();
+  });
+</script>
+
+</body>
+</html>

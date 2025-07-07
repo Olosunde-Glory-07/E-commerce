@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Forgot Password</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: purple;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .forgot-box {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 0px;
+      /*box-shadow: 0 0 15px rgba(0,0,0,0.2);*/
+      width: 350px;
+      text-align: center;
+    }
+
+    .forgot-box img {
+      width: 100px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      color: yellow;
+      margin-bottom: 20px;
+    }
+
+    input[type="email"],
+    input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+      background-color: yellow;
+      color: #002147;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #ffde59;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 20px;
+      color: red;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="forgot-box">
+    <div class="logo" style="color: yellow;">ShopEase</div>
+    <h2>Forgot Password</h2>
+    <form id="forgotForm">
+      <input type="email" name="email" placeholder="Enter your email" required>
+      <input type="Submit" value="Send Reset Link">
+    </form>
+    <a href="login.html" class="back-link">← Back to Login</a>
+  </div>
+
+  <script>
+    document.getElementById("forgotForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const email = document.querySelector("input[name='email']").value;
+
+      alert("✅ A reset link has been sent to " + email);
+      window.location.href = "login.html";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "name": "Manchester United Home Jersey 2024",
+    "description": "Official Manchester United home jersey for the 2024 season. Made with breathable materials.",
+    "price": 25000,
+    "team": "Manchester United",
+    "size": "M",
+    "material": "Polyester",
+    "image": "images/jerseys/manu-home-2024.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Arsenal Away Jersey 2024",
+    "description": "Stylish Arsenal away kit featuring a modern gold trim for the 2024 campaign.",
+    "price": 24500,
+    "team": "Arsenal",
+    "size": "L",
+    "material": "Polyester",
+    "image": "images/jerseys/arsenal-away-2024.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Chelsea Third Jersey 2024",
+    "description": "Official third kit of Chelsea FC, lightweight and sweat-wicking.",
+    "price": 23000,
+    "team": "Chelsea",
+    "size": "XL",
+    "material": "Polyester",
+    "image": "images/jerseys/chelsea-third-2024.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Liverpool Home Jersey 2024",
+    "description": "Liverpool's home kit with YNWA embroidery on the neck.",
+    "price": 26000,
+    "team": "Liverpool",
+    "size": "M",
+    "material": "Polyester",
+    "image": "images/jerseys/liverpool-home-2024.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Real Madrid Home Jersey 2024",
+    "description": "Elegant white kit with golden trims representing Real Madrid’s legacy.",
+    "price": 27000,
+    "team": "Real Madrid",
+    "size": "L",
+    "material": "Dri-Fit Polyester",
+    "image": "images/jerseys/realmadrid-home-2024.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Barcelona Away Jersey 2024",
+    "description": "Striking design with Catalan flag colors, official away kit for Barcelona.",
+    "price": 26500,
+    "team": "Barcelona",
+    "size": "M",
+    "material": "Polyester",
+    "image": "images/jerseys/barcelona-away-2024.jpg"
+  },
+  {
+    "id": 7,
+    "name": "Manchester City Home Jersey 2024",
+    "description": "Sky blue home jersey for Man City with lightning design details.",
+    "price": 25500,
+    "team": "Manchester City",
+    "size": "XL",
+    "material": "Dri-Fit",
+    "image": "images/jerseys/mancity-home-2024.jpg"
+  },
+  {
+    "id": 8,
+    "name": "Juventus Home Jersey 2024",
+    "description": "Classic black-and-white stripes with golden accent, Juventus 2024.",
+    "price": 24000,
+    "team": "Juventus",
+    "size": "L",
+    "material": "Polyester",
+    "image": "images/jerseys/juventus-home-2024.jpg"
+  },
+  {
+    "id": 9,
+    "name": "AC Milan Away Jersey 2024",
+    "description": "Sleek design representing the Rossoneri pride away from San Siro.",
+    "price": 25000,
+    "team": "AC Milan",
+    "size": "M",
+    "material": "Polyester",
+    "image": "images/jerseys/acmilan-away-2024.jpg"
+  },
+  {
+    "id": 10,
+    "name": "Paris Saint-Germain Home Jersey 2024",
+    "description": "Elegant Parisian look with navy and red stripe, PSG home kit.",
+    "price": 26500,
+    "team": "PSG",
+    "size": "S",
+    "material": "Dri-Fit",
+    "image": "images/jerseys/psg-home-2024.jpg"
+  },
+  {
+    "id": 50,
+    "name": "Inter Milan Away Jersey 2024",
+    "description": "White away jersey for Inter Milan with blue and black details.",
+    "price": 25000,
+    "team": "Inter Milan",
+    "size": "L",
+    "material": "Polyester",
+    "image": "images/jerseys/inter-away-2024.jpg"
+  }
+]

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopEase - Jerseys</title>
+  <style>
+    /* Reset & basics */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f7f8fc;
+      color: #222;
+      overflow-x: hidden;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      background: #2a9d8f;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1em 2em;
+      color: white;
+      z-index: 100;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+    }
+    nav a {
+      margin-left: 25px;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #e9c46a;
+    }
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .actions input[type="text"] {
+      padding: 0.4em 0.8em;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+      width: 180px;
+      transition: box-shadow 0.3s;
+    }
+    .actions input[type="text"]:focus {
+      box-shadow: 0 0 8px #e9c46a;
+    }
+    .actions a {
+      font-weight: 600;
+      background: #e9c46a;
+      color: #222;
+      padding: 0.5em 0.9em;
+      border-radius: 5px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+      transition: background 0.3s;
+    }
+    .actions a:hover {
+      background: #f4a261;
+      color: white;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 5em 1em;
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('images/football-bg.jpg') no-repeat center center/cover;
+      color: white;
+      animation: fadeInDown 1s ease forwards;
+    }
+    .hero h1 {
+      font-size: 3.2rem;
+      margin-bottom: 0.5em;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    }
+    .hero p {
+      font-size: 1.5rem;
+      margin-bottom: 2em;
+      font-weight: 500;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .btn {
+      background: #e9c46a;
+      padding: 1em 2.5em;
+      font-weight: 700;
+      color: #222;
+      border-radius: 50px;
+      box-shadow: 0 5px 15px rgba(233,196,106,0.5);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn:hover {
+      background: #f4a261;
+      transform: scale(1.05);
+      color: white;
+      box-shadow: 0 8px 20px rgba(244,162,97,0.7);
+    }
+
+    /* Section title */
+    section h2 {
+      text-align: center;
+      margin: 3em 0 1em;
+      font-weight: 700;
+      font-size: 2.2rem;
+      color: #264653;
+      letter-spacing: 1px;
+    }
+
+    /* Product grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2em;
+      max-width: 1100px;
+      margin: 0 auto 4em;
+      padding: 0 1em;
+    }
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      overflow: hidden;
+      padding-bottom: 1.5em;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+    .product-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 1px solid #eee;
+      transition: transform 0.4s ease;
+    }
+    .product-card:hover img {
+      transform: scale(1.05);
+    }
+    .product-card h3 {
+      margin: 0.8em 0 0.3em;
+      font-weight: 700;
+      color: #264653;
+      font-size: 1.2rem;
+    }
+    .product-card p {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #e76f51;
+      margin-bottom: 1em;
+    }
+    .product-card button {
+      background: #2a9d8f;
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.6em 1.4em;
+      border-radius: 30px;
+      box-shadow: 0 5px 15px rgba(42,157,143,0.5);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .product-card button:hover {
+      background: #1f6f6a;
+      transform: scale(1.05);
+    }
+
+    /* Footer */
+    footer {
+      background: #264653;
+      color: #f1faee;
+      text-align: center;
+      padding: 1.5em 1em;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-40px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="window.location.href='index.html'">ShopEase</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="actions">
+    <input type="text" id="search-input" placeholder="Search jerseys..." />
+    <a href="cart.html">Cart 🛒</a>
+    <a href="login.html">Logout</a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Latest Football Jerseys</h1>
+  <p>Shop your favorite club or national team kit</p>
+  <a href="shop.html" class="btn">Explore Jerseys</a>
+</section>
+
+<section class="products" aria-label="Jersey Products">
+  <h2>Our Jersey Collection</h2>
+  <div class="product-grid" id="jerseyProducts">
+    <!-- Jerseys will be injected here -->
+  </div>
+</section>
+
+<footer>
+  &copy; 2025 ShopEase. All rights reserved.
+</footer>
+
+<script>
+  const jerseyGrid = document.getElementById('jerseyProducts');
+
+  function renderJerseys(jerseys) {
+    jerseyGrid.innerHTML = '';
+    if (jerseys.length === 0) {
+      jerseyGrid.innerHTML = "<p>No jerseys found.</p>";
+      return;
+    }
+
+    jerseys.forEach(product => {
+      const card = document.createElement('div');
+      card.classList.add('product-card');
+      card.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" />
+        <h3>${product.name}</h3>
+        <p>₦${product.price.toLocaleString()}</p>
+        <button aria-label="View details for ${product.name}" data-id="${product.id}">View Details</button>
+      `;
+      jerseyGrid.appendChild(card);
+    });
+  }
+
+  fetch("http://localhost:5000/api/products")
+    .then(res => res.json())
+    .then(allProducts => {
+      // Filter by products that include 'jersey' in their name (case-insensitive)
+      const jerseys = allProducts
+        .filter(p => p.name.toLowerCase().includes("jersey"))
+        .slice(0, 12); // limit to 12 jerseys
+
+      renderJerseys(jerseys);
+
+      const searchInput = document.getElementById('search-input');
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        const filtered = jerseys.filter(p => p.name.toLowerCase().includes(query));
+        renderJerseys(filtered);
+      });
+
+      jerseyGrid.addEventListener('click', e => {
+        if (e.target.tagName === 'BUTTON') {
+          const id = e.target.dataset.id;
+          window.location.href = `product.html?id=${id}`;
+        }
+      });
+    })
+    .catch(err => {
+      console.error("Failed to load jersey products:", err);
+      jerseyGrid.innerHTML = "<p>Unable to load products. Please try again later.</p>";
+    });
+</script>
+
+</body>
+</html>

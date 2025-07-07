@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopEase - Product Details</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7f8fc;
+    }
+    header {
+      background: #2a9d8f;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    nav a {
+      margin-left: 20px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    nav a:hover {
+      color: #e9c46a;
+    }
+    main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      display: flex;
+      gap: 2rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      flex-wrap: wrap;
+    }
+    .product-img {
+      flex: 1 1 40%;
+    }
+    .product-img img {
+      width: 100%;
+      border-radius: 12px;
+    }
+    .product-info {
+      flex: 1 1 50%;
+    }
+    h1 {
+      margin: 0 0 0.5rem;
+      font-size: 2rem;
+      color: #264653;
+    }
+    .price {
+      color: #e76f51;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .tab {
+      background: #eee;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    .tab.active {
+      background: #2a9d8f;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .btn-add {
+      background: #2a9d8f;
+      color: white;
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-add:hover {
+      background: #1e7067;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="location.href='index.html'">ShopEase</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <a href="cart.html">Cart</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <div class="product-img">
+    <img id="productImage" src="" alt="Product Image">
+  </div>
+  <div class="product-info">
+    <h1 id="productName">Loading...</h1>
+    <div class="price" id="productPrice">#0.00</div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="desc">Description</div>
+      <div class="tab" data-tab="reviews">Reviews</div>
+      <div class="tab" data-tab="specs">Specs</div>
+    </div>
+
+    <div class="tab-content active" id="desc"></div>
+    <div class="tab-content" id="reviews"></div>
+    <div class="tab-content" id="specs"></div>
+
+    <button class="btn-add" id="addToCartBtn">Add to Cart</button>
+  </div>
+</main>
+
+<script>
+  const API_BASE = 'http://localhost:5000/api';
+  const getParam = (key) => new URLSearchParams(location.search).get(key);
+  const productId = getParam("id");
+
+  if (!productId) {
+    alert("Invalid product ID");
+    location.href = "shop.html";
+  }
+
+  fetch(`${API_BASE}/products`)
+    .then(res => res.json())
+    .then(products => {
+      const product = products.find(p => p.id == productId);
+      if (!product) throw new Error("Product not found");
+
+      document.getElementById("productName").textContent = product.name;
+      document.getElementById("productPrice").textContent = `₦${product.price.toLocaleString()}`;
+      document.getElementById("productImage").src = product.image || 'https://via.placeholder.com/300';
+      document.getElementById("desc").textContent = product.description || "No description available.";
+
+      document.getElementById("reviews").innerHTML = (product.reviews?.length > 0)
+        ? product.reviews.map(r => `<p><strong>${r.user}</strong>: ${'⭐'.repeat(r.rating)}<br>${r.comment}</p>`).join('')
+        : "No reviews yet.";
+
+      document.getElementById("specs").innerHTML = product.specs
+        ? Object.entries(product.specs).map(([k, v]) => `<p><strong>${k}:</strong> ${v}</p>`).join('')
+        : "No specifications available.";
+
+      document.getElementById("addToCartBtn").onclick = () => {
+        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        const existing = cart.find(item => item.id === product.id);
+        if (existing) {
+          existing.quantity++;
+        } else {
+          cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        alert(`Added "${product.name}" to your cart!`);
+      };
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Product not found or server is not running.");
+      location.href = "shop.html";
+    });
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove("active"));
+      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById(tab.dataset.tab).classList.add("active");
+    });
+  });
+</script>
+
+</body>
+</html>
